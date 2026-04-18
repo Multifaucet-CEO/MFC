@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Name=Multicoin Core
+Comment=Connect to the Multicoin P2P Network
+Comment[de]=Verbindung mit dem Multicoin Peer-to-Peer-Netzwerk herstellen
+Comment[es]=Conectar a la red P2P de Multicoin
+Comment[fr]=Se connecter au réseau pair à pair Multicoin
+GenericName=Cryptocurrency Wallet
+Exec=multicoin-qt %u
+Terminal=false
+Type=Application
+Icon=multicoin128
+MimeType=x-scheme-handler/multicoin;
+Categories=Office;Finance;Network;
+Keywords=multicoin;crypto;cryptocurrency;wallet;blockchain;
+StartupNotify=true
+StartupWMClass=Multicoin-qt
