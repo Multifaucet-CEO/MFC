@@ -8,59 +8,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-22.04
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive
-      
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config bsdmainutils python3
-        sudo apt-get install -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev
-        sudo apt-get install -y libminiupnpc-dev libzmq3-dev libfmt-dev
-        sudo apt-get install -y libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools
-        sudo apt-get install -y libprotobuf-dev protobuf-compiler libqrencode-dev
-        
-    - name: Build and install Berkeley DB 4.8
-      run: |
-        wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
-        tar -xzvf db-4.8.30.NC.tar.gz
-        cd db-4.8.30.NC/build_unix
-        sed -i 's/__atomic_compare_exchange/__atomic_compare_exchange_db/g' ../dist/../dbinc/atomic.h
-        ../dist/configure --enable-cxx --disable-shared --with-pic --prefix=$HOME/bdb
-        make -j$(nproc)
-        sudo make install
-        cd ../..
-        
-    - name: Build MFC
-      run: |
-        chmod +x autogen.sh
-        chmod +x share/genbuild.sh
-        ./autogen.sh
-        ./configure --with-gui=qt5 LDFLAGS="-L$HOME/bdb/lib/" CPPFLAGS="-I$HOME/bdb/include/"
-        make -j$(nproc)
-        
-    - name: Create Linux artifacts
-      run: |
-        mkdir -p release/linux
-        cp src/multicoind release/linux/
-        cp src/multicoin-cli release/linux/
-        cp src/multicoin-tx release/linux/
-        cp src/qt/multicoin-qt release/linux/
-        cd release/linux
-        tar -czf multicoin-linux-x64.tar.gz *
-        
-    - name: Upload Linux binaries
-      uses: actions/upload-artifact@v4
-      with:
-        name: multicoin-linux-x64
-        path: release/linux/multicoin-linux-x64.tar.gz
-
   build-windows:
     runs-on: ubuntu-22.04
     
