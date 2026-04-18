@@ -34,19 +34,14 @@ jobs:
         find . -type f -name "*.sh" -exec chmod +x {} \;
         find . -type f -name "config.guess" -exec chmod +x {} \;
         find . -type f -name "config.sub" -exec chmod +x {} \;
-        make HOST=x86_64-w64-mingw32 GLIBC_BACK_COMPAT=1 -j$(nproc) || (
-          echo "First build attempt failed, applying Qt patches..."
-          find work/build -name "qbytearraymatcher.h" -exec sed -i '/#define QBYTEARRAYMATCHER_H/a #include <limits>' {} \; 2>/dev/null || true
-          find work/build -name "qbytearray.cpp" -exec sed -i '1i #include <limits>' {} \; 2>/dev/null || true
-          make HOST=x86_64-w64-mingw32 GLIBC_BACK_COMPAT=1 -j$(nproc)
-        )
+        make HOST=x86_64-w64-mingw32 -j$(nproc)
         
     - name: Build MFC for Windows
       run: |
         chmod +x autogen.sh
         chmod +x share/genbuild.sh
         ./autogen.sh
-        CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/ --enable-glibc-back-compat --enable-reduce-exports
+        CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
         make -j$(nproc)
         
     - name: Create Windows artifacts
