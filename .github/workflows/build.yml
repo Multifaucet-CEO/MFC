@@ -26,6 +26,9 @@ jobs:
         
     - name: Build MFC
       run: |
+        chmod +x autogen.sh
+        chmod +x share/genbuild.sh
+        chmod +x src/secp256k1/autogen.sh
         ./autogen.sh
         ./configure --with-gui=qt5
         make -j$(nproc)
@@ -62,10 +65,14 @@ jobs:
     - name: Build dependencies
       run: |
         cd depends
+        find . -name "*.sh" -exec chmod +x {} \;
         make HOST=x86_64-w64-mingw32 -j$(nproc)
         
     - name: Build MFC for Windows
       run: |
+        chmod +x autogen.sh
+        chmod +x share/genbuild.sh
+        chmod +x src/secp256k1/autogen.sh
         ./autogen.sh
         CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
         make -j$(nproc)
