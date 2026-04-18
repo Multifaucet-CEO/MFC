@@ -34,7 +34,37 @@ jobs:
         find . -type f -name "*.sh" -exec chmod +x {} \;
         find . -type f -name "config.guess" -exec chmod +x {} \;
         find . -type f -name "config.sub" -exec chmod +x {} \;
-        make HOST=x86_64-w64-mingw32 -j$(nproc)
+        
+        # Start building dependencies - Qt will fail first time
+        make HOST=x86_64-w64-mingw32 -j$(nproc) || {
+          echo "First build failed (expected - Qt needs patching)"
+          
+          # Find and patch Qt files
+          QT_BUILD=$(find work/build/x86_64-w64-mingw32/qt -type d -name "qtbase" 2>/dev/null | head -n1)
+          
+          if [ -n "$QT_BUILD" ]; then
+            echo "Patching Qt files in: $QT_BUILD"
+            
+            # Patch qbytearraymatcher.h
+            if [ -f "$QT_BUILD/src/corelib/tools/qbytearraymatcher.h" ]; then
+              sed -i '1i #include <limits>' "$QT_BUILD/src/corelib/tools/qbytearraymatcher.h"
+              echo "✓ Patched qbytearraymatcher.h"
+            fi
+            
+            # Patch qbytearray.cpp
+            if [ -f "$QT_BUILD/src/corelib/tools/qbytearray.cpp" ]; then
+              sed -i '1i #include <limits>' "$QT_BUILD/src/corelib/tools/qbytearray.cpp"
+              echo "✓ Patched qbytearray.cpp"
+            fi
+            
+            # Try build again
+            echo "Retrying build with patched Qt..."
+            make HOST=x86_64-w64-mingw32 -j$(nproc)
+          else
+            echo "ERROR: Could not find Qt build directory!"
+            exit 1
+          fi
+        }
         
     - name: Build MFC for Windows
       run: |
