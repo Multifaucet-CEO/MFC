@@ -30,22 +30,6 @@ jobs:
         find . -type f -name "*.sh" -exec chmod +x {} \;
         find . -type f -name "config.guess" -exec chmod +x {} \;
         find . -type f -name "config.sub" -exec chmod +x {} \;
-        
-        # Create Qt GCC 11 compatibility patch
-        mkdir -p patches/qt
-        cat > patches/qt/fix-gcc11.patch << 'QTPATCH'
---- a/qtbase/src/corelib/tools/qbytearraymatcher.h
-+++ b/qtbase/src/corelib/tools/qbytearraymatcher.h
-@@ -40,6 +40,7 @@
- 
- #ifndef QBYTEARRAYMATCHER_H
- #define QBYTEARRAYMATCHER_H
-+#include <limits>
- 
- #include <QtCore/qbytearray.h>
-QTPATCH
-        
-        # Build with automatic patching
         make HOST=x86_64-w64-mingw32 -j$(nproc) || (
           echo "First build attempt failed, applying Qt patches..."
           find work/build -name "qbytearraymatcher.h" -exec sed -i '/#define QBYTEARRAYMATCHER_H/a #include <limits>' {} \; 2>/dev/null || true
