@@ -22,16 +22,26 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config bsdmainutils python3
         sudo apt-get install -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev
-        sudo apt-get install -y libdb++-dev libminiupnpc-dev libzmq3-dev
+        sudo apt-get install -y libminiupnpc-dev libzmq3-dev
         sudo apt-get install -y libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools
         sudo apt-get install -y libprotobuf-dev protobuf-compiler libqrencode-dev
+        
+    - name: Build and install Berkeley DB 4.8
+      run: |
+        wget http://download.oracle.com/berkeley-db/db-4.8.30.NC.tar.gz
+        tar -xzvf db-4.8.30.NC.tar.gz
+        cd db-4.8.30.NC/build_unix
+        ../dist/configure --enable-cxx --disable-shared --with-pic --prefix=$HOME/bdb
+        make -j$(nproc)
+        sudo make install
+        cd ../..
         
     - name: Build MFC
       run: |
         chmod +x autogen.sh
         chmod +x share/genbuild.sh
         ./autogen.sh
-        ./configure --with-gui=qt5
+        ./configure --with-gui=qt5 LDFLAGS="-L$HOME/bdb/lib/" CPPFLAGS="-I$HOME/bdb/include/"
         make -j$(nproc)
         
     - name: Create Linux artifacts
@@ -68,7 +78,10 @@ jobs:
     - name: Build dependencies
       run: |
         cd depends
-        find . -name "*.sh" -exec chmod +x {} \;
+        chmod +x config.guess config.sub
+        find . -type f -name "*.sh" -exec chmod +x {} \;
+        find . -type f -name "config.guess" -exec chmod +x {} \;
+        find . -type f -name "config.sub" -exec chmod +x {} \;
         make HOST=x86_64-w64-mingw32 -j$(nproc)
         
     - name: Build MFC for Windows
