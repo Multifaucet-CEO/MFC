@@ -8,7 +8,7 @@
 
 #include <chainparamsseeds.h>
 #include <consensus/merkle.h>
-#include <hash.h> // for signet block challenge hash
+#include <hash.h>
 #include <tinyformat.h>
 #include <util/strencodings.h>
 #include <util/system.h>
@@ -98,10 +98,10 @@ public:
         m_assumed_blockchain_size = 1;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1745020800, 2084524493, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1745020800, 0, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
-        // NO ASSERTIONS - Let it run and mine the genesis block
+        // Genesis block will be mined on first run - no assertions needed
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 50);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 55);
@@ -113,7 +113,8 @@ public:
         bech32_hrp = "mfc";
         mweb_hrp = "mfcmweb";
 
-        vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_main), std::end(chainparams_seed_main));
+        vFixedSeeds.clear();
+        vSeeds.clear();
 
         fDefaultConsistencyChecks = false;
         fRequireStandard = true;
@@ -139,7 +140,7 @@ public:
     CTestNetParams()
     {
         strNetworkID = CBaseChainParams::TESTNET;
-        vFixedSeeds.clear(); // No fixed seeds for new chain
+        consensus.signet_blocks = false;
         consensus.signet_challenge.clear();
         consensus.nSubsidyHalvingInterval = 840000;
         consensus.BIP16Height = 0;
@@ -181,7 +182,7 @@ public:
         m_assumed_blockchain_size = 1;
         m_assumed_chain_state_size = 1;
 
-        genesis = CreateGenesisBlock(1745020800, 293345, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1745020800, 0, 0x1e0ffff0, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
 
         vFixedSeeds.clear();
@@ -197,7 +198,7 @@ public:
         bech32_hrp = "tmfc";
         mweb_hrp = "tmfcmweb";
 
-        vFixedSeeds.clear(); // No fixed seeds for testnet
+        vFixedSeeds.clear();
 
         fDefaultConsistencyChecks = false;
         fRequireStandard = false;
@@ -227,7 +228,7 @@ public:
         consensus.signet_challenge.clear();
         consensus.nSubsidyHalvingInterval = 150;
         consensus.BIP16Height = 0;
-        vFixedSeeds.clear(); // No fixed seeds for testnet
+        consensus.BIP34Height = 500;
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351;
         consensus.BIP66Height = 1251;
