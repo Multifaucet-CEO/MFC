@@ -139,7 +139,7 @@ public:
     CTestNetParams()
     {
         strNetworkID = CBaseChainParams::TESTNET;
-        consensus.signet_blocks = false;
+        vFixedSeeds.clear(); // No fixed seeds for new chain
         consensus.signet_challenge.clear();
         consensus.nSubsidyHalvingInterval = 840000;
         consensus.BIP16Height = 0;
@@ -197,7 +197,7 @@ public:
         bech32_hrp = "tmfc";
         mweb_hrp = "tmfcmweb";
 
-        vFixedSeeds = std::vector<uint8_t>(std::begin(chainparams_seed_test), std::end(chainparams_seed_test));
+        vFixedSeeds.clear(); // No fixed seeds for testnet
 
         fDefaultConsistencyChecks = false;
         fRequireStandard = false;
@@ -227,7 +227,7 @@ public:
         consensus.signet_challenge.clear();
         consensus.nSubsidyHalvingInterval = 150;
         consensus.BIP16Height = 0;
-        consensus.BIP34Height = 500;
+        vFixedSeeds.clear(); // No fixed seeds for testnet
         consensus.BIP34Hash = uint256();
         consensus.BIP65Height = 1351;
         consensus.BIP66Height = 1251;
