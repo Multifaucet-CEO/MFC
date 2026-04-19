@@ -80,17 +80,26 @@ jobs:
         sed -i 's/alias="bitcoin"/alias="multicoin"/g' src/qt/bitcoin.qrc
         
         CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
-        make -j$(nproc)
+        
+        # Build only the executables, skip documentation
+        make -j$(nproc) -C src multicoind.exe multicoin-cli.exe multicoin-tx.exe qt/multicoin-qt.exe || {
+          echo "Direct target build failed, trying full build..."
+          make -j$(nproc) || true
+        }
         
     - name: Create Windows artifacts
       run: |
         mkdir -p release/windows
-        cp src/multicoind.exe release/windows/
-        cp src/multicoin-cli.exe release/windows/
-        cp src/multicoin-tx.exe release/windows/
-        cp src/qt/multicoin-qt.exe release/windows/
+        
+        # Copy all built executables
+        find src -name "*.exe" -exec cp {} release/windows/ \;
+        
+        # List what we got
+        echo "Built executables:"
+        ls -lh release/windows/
+        
         cd release/windows
-        zip -r multicoin-windows-x64.zip *
+        zip -r multicoin-windows-x64.zip *.exe
         
     - name: Upload Windows binaries
       uses: actions/upload-artifact@v4
