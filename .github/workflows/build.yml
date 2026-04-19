@@ -71,8 +71,15 @@ jobs:
         chmod +x autogen.sh
         chmod +x share/genbuild.sh
         ./autogen.sh
+        
+        # Fix bitcoin.qrc BEFORE configure
+        echo "Fixing bitcoin.qrc references..."
+        sed -i 's/bitcoin\.png/multicoin.png/g' src/qt/bitcoin.qrc
+        sed -i 's/bitcoin\.ico/multicoin.ico/g' src/qt/bitcoin.qrc
+        sed -i 's/litecoin_splash/multicoin_splash/g' src/qt/bitcoin.qrc
+        sed -i 's/alias="bitcoin"/alias="multicoin"/g' src/qt/bitcoin.qrc
+        
         CONFIG_SITE=$PWD/depends/x86_64-w64-mingw32/share/config.site ./configure --prefix=/
-        make clean || true
         make -j$(nproc)
         
     - name: Create Windows artifacts
