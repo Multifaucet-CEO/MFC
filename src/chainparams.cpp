@@ -136,8 +136,8 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xB2, 0x1E};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xAD, 0xE4};
 
-        bech32_hrp = "ltc";
-        mweb_hrp = "ltcmweb";
+        bech32_hrp = "muc";
+        mweb_hrp = "mucmweb";
 
         // STEP 7: Clear fixed seeds
         vFixedSeeds.clear();
@@ -229,8 +229,8 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        bech32_hrp = "tltc";
-        mweb_hrp = "tmweb";
+        bech32_hrp = "tmuc";
+        mweb_hrp = "tmucweb";
 
         vFixedSeeds.clear();
 
@@ -332,8 +332,8 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        bech32_hrp = "rltc";
-        mweb_hrp = "tmweb";
+        bech32_hrp = "rmuc";
+        mweb_hrp = "tmucweb";
     }
 
     /**
